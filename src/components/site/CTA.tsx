@@ -1,7 +1,29 @@
+import { useState } from "react";
+import { toast } from "sonner";
 import hero1 from "@/assets/hero-1.jpg";
 import hero2 from "@/assets/hero-2.jpg";
 
 export function CTA() {
+  const [contact, setContact] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contact.trim()) return;
+
+    setSubmitting(true);
+
+    // Simulate API submission
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    toast.success("Consultation Request Received!", {
+      description: "Our experts at Artforms Civil & Interior will get in touch with you shortly.",
+    });
+
+    setContact("");
+    setSubmitting(false);
+  };
+
   return (
     <section id="cta" className="relative overflow-hidden bg-ink py-24 text-canvas md:py-36">
       <img
@@ -32,20 +54,24 @@ export function CTA() {
             Planning a new civil construction project, 3D elevation design, or interior renovation in Hassan? Connect with Artforms Civil & Interior for expert consultation and estimates.
           </p>
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             className="mt-12 flex flex-col gap-3 sm:flex-row"
           >
             <input
               type="text"
               required
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              disabled={submitting}
               placeholder="Enter your phone number or email"
-              className="flex-1 border-b border-canvas/30 bg-transparent px-2 py-4 text-canvas placeholder:text-canvas/40 focus:border-clay focus:outline-none"
+              className="flex-1 border-b border-canvas/30 bg-transparent px-2 py-4 text-canvas placeholder:text-canvas/40 focus:border-clay focus:outline-none disabled:opacity-50"
             />
             <button
               type="submit"
-              className="rounded-full bg-canvas px-8 py-4 text-[12px] uppercase tracking-[0.24em] text-ink transition-all hover:bg-clay hover:text-canvas"
+              disabled={submitting}
+              className="rounded-full bg-canvas px-8 py-4 text-[12px] uppercase tracking-[0.24em] text-ink transition-all hover:bg-clay hover:text-canvas disabled:opacity-75 disabled:hover:bg-canvas disabled:hover:text-ink min-w-[200px]"
             >
-              Get Free Consultation
+              {submitting ? "Submitting..." : "Get Free Consultation"}
             </button>
           </form>
           <div className="mt-6 text-[11px] uppercase tracking-[0.24em] text-canvas/45">
