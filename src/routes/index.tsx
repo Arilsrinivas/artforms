@@ -1,0 +1,36 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Nav } from "@/components/site/Nav";
+import { Hero } from "@/components/site/Hero";
+import { Marquee } from "@/components/site/Marquee";
+import { Services } from "@/components/site/Services";
+import { Styles } from "@/components/site/Styles";
+import { Projects } from "@/components/site/Projects";
+import { Process } from "@/components/site/Process";
+import { Testimonials } from "@/components/site/Testimonials";
+import { Journal } from "@/components/site/Journal";
+import { CTA } from "@/components/site/CTA";
+import { Footer } from "@/components/site/Footer";
+
+export const Route = createFileRoute("/")({
+  component: Index,
+});
+
+function Index() {
+  return (
+    <div className="min-h-screen bg-canvas text-ink antialiased">
+      <Nav />
+      <main>
+        <Hero />
+        <Marquee />
+        <Services />
+        <Styles />
+        <Projects />
+        <Process />
+        <Testimonials />
+        <Journal />
+        <CTA />
+      </main>
+      <Footer />
+    </div>
+  );
+}
