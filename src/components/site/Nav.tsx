@@ -3,12 +3,30 @@ import { useEffect, useState } from "react";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Check admin login
+    if (typeof window !== "undefined") {
+      setIsAdmin(localStorage.getItem("artforms_admin_auth") === "true");
+    }
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const navItems = [
+    { name: "Services", href: "/#services", isExternal: false },
+    { name: "Projects", href: "/#projects", isExternal: false },
+    { name: "Process", href: "/#process", isExternal: false },
+    { name: "Journal", href: "/#journal", isExternal: false },
+    { name: "Updates", href: "/updates", isExternal: true },
+    ...(isAdmin ? [{ name: "Business Updates", href: "/admin/business-updates", isExternal: true }] : []),
+    { name: "Contact", href: "/#cta", isExternal: false }
+  ];
 
   return (
     <header
@@ -33,17 +51,36 @@ export function Nav() {
             scrolled ? "text-ink/80" : "text-canvas/90"
           }`}
         >
-          {["Services", "Projects", "Process", "Journal", "Contact"].map((i) => (
-            <a
-              key={i}
-              href={`#${i.toLowerCase()}`}
-              className={`story-link transition-colors ${
-                scrolled ? "hover:text-ink" : "hover:text-canvas"
-              }`}
-            >
-              {i}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const isHomePage = typeof window !== "undefined" && window.location.pathname === "/";
+            const targetHref = item.isExternal
+              ? item.href
+              : isHomePage
+              ? item.href.replace("/", "")
+              : item.href;
+
+            return item.isExternal ? (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`story-link transition-colors ${
+                  scrolled ? "hover:text-ink animate-fade-in" : "hover:text-canvas animate-fade-in"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ) : (
+              <a
+                key={item.name}
+                href={targetHref}
+                className={`story-link transition-colors ${
+                  scrolled ? "hover:text-ink" : "hover:text-canvas"
+                }`}
+              >
+                {item.name}
+              </a>
+            );
+          })}
         </nav>
         <a
           href="#cta"

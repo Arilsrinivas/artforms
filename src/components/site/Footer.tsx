@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
   return (
     <footer className="border-t border-border bg-canvas py-14">
@@ -30,6 +32,12 @@ export function Footer() {
             <li className="story-link block">3D Elevation Design</li>
             <li className="story-link block">Residential Interiors</li>
             <li className="story-link block">Turnkey Execution</li>
+            <li className="block pt-2">
+              <Link to="/updates" className="text-clay hover:underline block">Updates Feed</Link>
+            </li>
+            <li className="block">
+              <Link to="/admin/login" className="text-muted-foreground hover:text-ink text-[11px] uppercase tracking-wider block">Admin Portal</Link>
+            </li>
           </ul>
         </div>
       </div>
