@@ -100,29 +100,76 @@ function AdminBusinessUpdatesPage() {
   };
 
   // Convert files helper for simulated uploads
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: "normal" | "before" | "after") => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "normal" | "before" | "after") => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const validation = UpdatesStore.validateUpload(file);
-    if (!validation.valid) {
-      toast.error(validation.error || "Invalid file upload");
-      return;
-    }
+    if (field === "normal" && uploadType === "image") {
+      // Support multiple file uploads for images directly to the carousel draft list
+      const loadedMedia: Omit<MediaItem, "id">[] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const validation = UpdatesStore.validateUpload(file);
+        if (!validation.valid) {
+          toast.error(validation.error || `File ${file.name} is invalid.`);
+          continue;
+        }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (field === "normal") {
-        setUploadedUrl(result);
-      } else if (field === "before") {
-        setBeforeUrl(result);
-      } else if (field === "after") {
-        setAfterUrl(result);
+        const dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (event) => resolve(event.target?.result as string);
+          reader.readAsDataURL(file);
+        });
+
+        loadedMedia.push({
+          type: "image",
+          url: dataUrl,
+          title: "Media Asset"
+        });
       }
-      toast.success(`${file.name} prepared successfully.`);
-    };
-    reader.readAsDataURL(file);
+
+      if (loadedMedia.length > 0) {
+        setMediaList((prev) => [...prev, ...loadedMedia]);
+        toast.success(`Successfully uploaded ${loadedMedia.length} image(s) to carousel.`);
+      }
+    } else {
+      // Single file upload for video, pdf, before, after
+      const file = files[0];
+      const validation = UpdatesStore.validateUpload(file);
+      if (!validation.valid) {
+        toast.error(validation.error || "Invalid file upload");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        if (field === "normal") {
+          setUploadedUrl(result);
+          
+          // Auto-add video or pdf straight into the list to reduce clicks
+          if (uploadType !== "image") {
+            setMediaList((prev) => [...prev, {
+              type: uploadType,
+              url: result,
+              title: uploadType === "pdf" ? "Project Brochure" : "Media Asset"
+            }]);
+            setUploadedUrl("");
+            toast.success(`${file.name} added directly to post media.`);
+          } else {
+            toast.success(`${file.name} prepared successfully.`);
+          }
+        } else if (field === "before") {
+          setBeforeUrl(result);
+          toast.success("Before image prepared.");
+        } else if (field === "after") {
+          setAfterUrl(result);
+          toast.success("After image prepared.");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const addMediaToPost = () => {
@@ -494,6 +541,7 @@ function AdminBusinessUpdatesPage() {
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   accept={uploadType === "video" ? "video/*" : uploadType === "pdf" ? "application/pdf" : "image/*"}
                   style={{ display: uploadType === "before-after" ? "none" : "block" }}
+                  multiple={uploadType === "image"}
                 />
                 
                 {uploadType === "before-after" ? (

@@ -9,6 +9,7 @@ import { Process } from "@/components/site/Process";
 import { Testimonials } from "@/components/site/Testimonials";
 import { Journal } from "@/components/site/Journal";
 import { LatestUpdates } from "@/components/site/LatestUpdates";
+import { FeaturedPostPopup } from "@/components/site/FeaturedPostPopup";
 import { CTA } from "@/components/site/CTA";
 import { Footer } from "@/components/site/Footer";
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="min-h-screen bg-canvas text-ink antialiased">
+      <FeaturedPostPopup />
       <Nav />
       <main>
         <Hero />
