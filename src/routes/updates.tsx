@@ -4,6 +4,7 @@ import { UpdatesStore, Post, ProjectType, Comment } from "@/lib/updates-store";
 import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
 import {
   Heart,
   MessageCircle,
@@ -387,16 +388,7 @@ function UpdatesPage() {
                       )}
 
                       {currentMedia.type === "video" && (
-                        <div className="relative h-full w-full">
-                          <video
-                            src={currentMedia.url}
-                            controls
-                            muted
-                            autoPlay
-                            loop
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
+                        <SafeVideoPlayer src={currentMedia.url} />
                       )}
 
                       {currentMedia.type === "before-after" && (
@@ -696,10 +688,8 @@ function UpdatesPage() {
               )}
 
               {filteredPosts[lightboxIndex].media[activeMediaIndex].type === "video" && (
-                <video
+                <SafeVideoPlayer
                   src={filteredPosts[lightboxIndex].media[activeMediaIndex].url}
-                  controls
-                  autoPlay
                   className="max-h-[70vh] max-w-[85vw] object-contain rounded"
                 />
               )}

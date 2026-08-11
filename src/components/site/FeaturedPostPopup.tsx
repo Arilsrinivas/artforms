@@ -3,6 +3,8 @@ import { UpdatesStore, Post } from "@/lib/updates-store";
 import { Link } from "@tanstack/react-router";
 import { X, MapPin, Calendar, ArrowRight, Eye, Heart } from "lucide-react";
 
+import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
+
 export function FeaturedPostPopup() {
   const [latestPost, setLatestPost] = useState<Post | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -72,7 +74,9 @@ export function FeaturedPostPopup() {
           
           {/* Left Media Section */}
           <div className="md:col-span-6 relative aspect-[4/3] md:aspect-auto md:min-h-[380px] bg-sand/20 overflow-hidden">
-            {coverImage ? (
+            {hasMedia && latestPost.media[0].type === "video" ? (
+              <SafeVideoPlayer src={latestPost.media[0].url} />
+            ) : coverImage ? (
               <img
                 src={coverImage}
                 alt=""

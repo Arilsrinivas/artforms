@@ -106,6 +106,29 @@ const getOrCreateVisitorId = (): string => {
 // Initial Seed Data matching premium assets
 const initialPosts: Post[] = [
   {
+    id: "post_v1",
+    caption: "Full Site Walkthrough & Interior Inspection. Watch our latest site progress video showcasing structural civil framework and custom lighting installations in Hassan. #BehindTheScenes #SiteWalkthrough #Artforms #CivilWorks",
+    location: "BM Road, Hassan",
+    category: "Civil Works",
+    status: "Behind the Scenes",
+    media: [
+      {
+        id: "m_v1",
+        type: "video",
+        url: "https://assets.mixkit.co/videos/preview/mixkit-modern-apartment-architecture-and-interior-41589-large.mp4",
+        title: "Site Walkthrough Video"
+      }
+    ],
+    pinned: true,
+    isDraft: false,
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+    likes: 88,
+    reactions: { heart: 50, thumbsUp: 24, clap: 10, fire: 4 },
+    commentsEnabled: true,
+    views: 340,
+    shares: 14
+  },
+  {
     id: "post_1",
     caption: "Crafting warmth in every corner. Detailed look into our recently completed interior project at KR Puram, Hassan. Focused on bespoke teak wood cladding, warm ambient profile lighting, and custom joinery. #InteriorDesign #HomeDecor #Hassan #Artforms #CivilEngineering",
     location: "KR Puram, Hassan",
@@ -116,7 +139,7 @@ const initialPosts: Post[] = [
       { id: "m2", type: "image", url: p1 },
       { id: "m3", type: "image", url: i3 }
     ],
-    pinned: true,
+    pinned: false,
     isDraft: false,
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
     likes: 124,

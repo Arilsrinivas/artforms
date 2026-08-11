@@ -12,6 +12,7 @@ import {
 } from "@/lib/updates-store";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
 import {
   Plus,
   Settings,
@@ -657,7 +658,7 @@ function AdminBusinessUpdatesPage() {
                         <img src={post.media[0].beforeUrl} className="h-full w-full object-cover" />
                       )}
                       {post.media && post.media.length > 0 && post.media[0].type === "video" && (
-                        <div className="h-full w-full flex items-center justify-center bg-ink/10 text-xs">Video Content</div>
+                        <SafeVideoPlayer src={post.media[0].url} />
                       )}
                       {post.media && post.media.length > 0 && post.media[0].type === "pdf" && (
                         <div className="h-full w-full flex items-center justify-center bg-sand/15 text-xs">PDF Document</div>
