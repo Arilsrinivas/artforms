@@ -235,7 +235,34 @@ const getStorageItem = <T>(key: string, fallback: T): T => {
 
 const setStorageItem = <T>(key: string, val: T): void => {
   if (typeof window === "undefined") return;
-  localStorage.setItem(key, JSON.stringify(val));
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) {
+    console.warn("Storage quota exceeded or error writing key:", key, e);
+    // If saving posts caused a quota error, sanitize large base64 strings
+    if (key === STORAGE_KEYS.POSTS && Array.isArray(val)) {
+      const sanitized = (val as any[]).map((post) => ({
+        ...post,
+        media: (post.media || []).map((m: any) => {
+          // If media URL is a giant Base64 video/image (>250KB), replace with fallback URL
+          if (m.url && m.url.startsWith("data:") && m.url.length > 250000) {
+            return {
+              ...m,
+              url: m.type === "video" 
+                ? "https://assets.mixkit.co/videos/preview/mixkit-modern-apartment-architecture-and-interior-41589-large.mp4"
+                : m.url.substring(0, 150) // placeholder fallback
+            };
+          }
+          return m;
+        })
+      }));
+      try {
+        localStorage.setItem(key, JSON.stringify(sanitized));
+      } catch (err) {
+        console.error("Failed to save sanitized posts", err);
+      }
+    }
+  }
 };
 
 export const UpdatesStore = {
@@ -512,15 +539,16 @@ export const UpdatesStore = {
 
   // --- MOCK UPLOAD VALIDATION ---
   validateUpload(file: File): { valid: boolean; error?: string } {
-    const maxSizeBytes = 100 * 1024 * 1024; // 100 MB
+    const maxSizeBytes = 150 * 1024 * 1024; // 150 MB limit
     if (file.size > maxSizeBytes) {
-      return { valid: false, error: "File exceeds 100 MB upload limit." };
+      return { valid: false, error: "File exceeds 150 MB upload limit." };
     }
 
-    const type = file.type;
-    const isImage = type.startsWith("image/");
-    const isVideo = type.startsWith("video/");
-    const isPdf = type === "application/pdf";
+    const type = file.type || "";
+    const name = file.name.toLowerCase();
+    const isImage = type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|svg|bmp)$/i.test(name);
+    const isVideo = type.startsWith("video/") || /\.(mp4|mov|webm|mkv|avi|3gp|m4v|wmv|flv)$/i.test(name);
+    const isPdf = type === "application/pdf" || name.endsWith(".pdf");
 
     if (!isImage && !isVideo && !isPdf) {
       return { valid: false, error: "Unsupported file type. Upload images, videos, or PDFs." };

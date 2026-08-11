@@ -142,21 +142,36 @@ function AdminBusinessUpdatesPage() {
         return;
       }
 
+      if (field === "normal" && uploadType === "video") {
+        // Fast, zero-quota blob object URL generation for video files
+        const videoBlobUrl = URL.createObjectURL(file);
+        setUploadedUrl(videoBlobUrl);
+        setMediaList((prev) => [
+          ...prev,
+          {
+            type: "video",
+            url: videoBlobUrl,
+            title: file.name || "Video Project Clip"
+          }
+        ]);
+        toast.success(`Video "${file.name}" uploaded & added to post media!`);
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (event) => {
         const result = event.target?.result as string;
         if (field === "normal") {
           setUploadedUrl(result);
           
-          // Auto-add video or pdf straight into the list to reduce clicks
-          if (uploadType !== "image") {
+          if (uploadType === "pdf") {
             setMediaList((prev) => [...prev, {
-              type: uploadType,
+              type: "pdf",
               url: result,
-              title: uploadType === "pdf" ? "Project Brochure" : "Media Asset"
+              title: "Project Brochure (PDF)"
             }]);
             setUploadedUrl("");
-            toast.success(`${file.name} added directly to post media.`);
+            toast.success(`PDF "${file.name}" added directly to post media.`);
           } else {
             toast.success(`${file.name} prepared successfully.`);
           }

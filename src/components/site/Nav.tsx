@@ -36,10 +36,10 @@ export function Nav() {
           : "bg-gradient-to-b from-ink/80 via-ink/40 to-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-10">
+        <Link to="/" className="flex items-center gap-2 shrink-0">
           <span
-            className={`font-[family-name:var(--font-display)] text-2xl tracking-[0.02em] transition-colors ${
+            className={`font-[family-name:var(--font-display)] text-xl sm:text-2xl tracking-[0.02em] transition-colors ${
               scrolled ? "text-ink" : "text-canvas"
             }`}
           >
@@ -47,7 +47,7 @@ export function Nav() {
           </span>
         </Link>
         <nav
-          className={`hidden items-center gap-9 text-[13px] uppercase tracking-[0.18em] transition-colors md:flex ${
+          className={`hidden items-center gap-3 lg:gap-5 xl:gap-7 text-[11px] lg:text-[12px] xl:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.14em] xl:tracking-[0.18em] transition-colors lg:flex ${
             scrolled ? "text-ink/80" : "text-canvas/90"
           }`}
         >
@@ -63,7 +63,7 @@ export function Nav() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`story-link transition-colors ${
+                className={`story-link transition-colors whitespace-nowrap ${
                   scrolled ? "hover:text-ink animate-fade-in" : "hover:text-canvas animate-fade-in"
                 }`}
               >
@@ -73,7 +73,7 @@ export function Nav() {
               <a
                 key={item.name}
                 href={targetHref}
-                className={`story-link transition-colors ${
+                className={`story-link transition-colors whitespace-nowrap ${
                   scrolled ? "hover:text-ink" : "hover:text-canvas"
                 }`}
               >
@@ -84,7 +84,7 @@ export function Nav() {
         </nav>
         <a
           href="#cta"
-          className={`hidden rounded-full border px-5 py-2.5 text-[12px] uppercase tracking-[0.2em] transition-all duration-300 md:inline-block ${
+          className={`shrink-0 hidden rounded-full border px-4 py-2 lg:px-5 lg:py-2.5 text-[11px] lg:text-[12px] uppercase tracking-[0.16em] lg:tracking-[0.2em] transition-all duration-300 md:inline-block ${
             scrolled
               ? "border-ink/80 text-ink hover:bg-ink hover:text-canvas"
               : "border-canvas/80 text-canvas hover:bg-canvas hover:text-ink"
