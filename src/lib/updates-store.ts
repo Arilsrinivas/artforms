@@ -9,6 +9,7 @@ import h3 from "@/assets/hero-3.jpg";
 import i1 from "@/assets/inspiration-1.jpg";
 import i2 from "@/assets/inspiration-2.jpg";
 import i3 from "@/assets/inspiration-3.jpg";
+import { MediaStorage } from "@/lib/media-storage";
 
 export type ProjectType =
   | "Residential"
@@ -344,6 +345,24 @@ export const UpdatesStore = {
 
   deletePost(id: string): void {
     let posts = getStorageItem<Post[]>(STORAGE_KEYS.POSTS, initialPosts);
+    const postToDelete = posts.find((p) => p.id === id);
+    if (postToDelete && postToDelete.media) {
+      postToDelete.media.forEach((m) => {
+        if (m.url && m.url.startsWith("indexeddb://")) {
+          const mId = m.url.replace("indexeddb://", "");
+          MediaStorage.deleteMediaBlob(mId);
+        }
+        if (m.beforeUrl && m.beforeUrl.startsWith("indexeddb://")) {
+          const mId = m.beforeUrl.replace("indexeddb://", "");
+          MediaStorage.deleteMediaBlob(mId);
+        }
+        if (m.afterUrl && m.afterUrl.startsWith("indexeddb://")) {
+          const mId = m.afterUrl.replace("indexeddb://", "");
+          MediaStorage.deleteMediaBlob(mId);
+        }
+      });
+    }
+
     posts = posts.filter((p) => p.id !== id);
     setStorageItem(STORAGE_KEYS.POSTS, posts);
     
@@ -560,21 +579,72 @@ export const UpdatesStore = {
     };
   },
 
-  // --- MOCK UPLOAD VALIDATION ---
-  validateUpload(file: File): { valid: boolean; error?: string } {
-    const maxSizeBytes = 150 * 1024 * 1024; // 150 MB limit
-    if (file.size > maxSizeBytes) {
-      return { valid: false, error: "File exceeds 150 MB upload limit." };
-    }
+  // --- UPLOAD VALIDATION ---
+  validateUpload(file: File, expectedType?: "image" | "video" | "pdf" | "before-after"): { valid: boolean; error?: string; mediaType?: "image" | "video" | "pdf" } {
+    const formatSize = (bytes: number) => {
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    };
 
-    const type = file.type || "";
+    const type = file.type.toLowerCase();
     const name = file.name.toLowerCase();
-    const isImage = type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|svg|bmp)$/i.test(name);
-    const isVideo = type.startsWith("video/") || /\.(mp4|mov|webm|mkv|avi|3gp|m4v|wmv|flv)$/i.test(name);
-    const isPdf = type === "application/pdf" || name.endsWith(".pdf");
+
+    // Valid format definitions
+    const isImage = (
+      type === "image/jpeg" ||
+      type === "image/png" ||
+      type === "image/webp" ||
+      /\.(jpe?g|png|webp)$/i.test(name)
+    );
+
+    const isVideo = (
+      type === "video/mp4" ||
+      type === "video/webm" ||
+      type === "video/quicktime" ||
+      /\.(mp4|webm|mov)$/i.test(name)
+    );
+
+    const isPdf = type === "application/pdf" || /\.pdf$/i.test(name);
 
     if (!isImage && !isVideo && !isPdf) {
-      return { valid: false, error: "Unsupported file type. Upload images, videos, or PDFs." };
+      return {
+        valid: false,
+        error: `Unsupported file format for "${file.name}". Supported: JPG, PNG, WebP images; MP4, WebM, MOV videos; PDF documents.`
+      };
+    }
+
+    // Size limits by category
+    if (isVideo) {
+      const maxVideoBytes = 100 * 1024 * 1024; // 100 MB
+      if (file.size > maxVideoBytes) {
+        return {
+          valid: false,
+          error: `Video is too large (${formatSize(file.size)}). Maximum allowed video size is 100 MB.`
+        };
+      }
+      return { valid: true, mediaType: "video" };
+    }
+
+    if (isImage) {
+      const maxImageBytes = 25 * 1024 * 1024; // 25 MB
+      if (file.size > maxImageBytes) {
+        return {
+          valid: false,
+          error: `Image is too large (${formatSize(file.size)}). Maximum allowed image size is 25 MB.`
+        };
+      }
+      return { valid: true, mediaType: "image" };
+    }
+
+    if (isPdf) {
+      const maxPdfBytes = 50 * 1024 * 1024; // 50 MB
+      if (file.size > maxPdfBytes) {
+        return {
+          valid: false,
+          error: `PDF document is too large (${formatSize(file.size)}). Maximum allowed size is 50 MB.`
+        };
+      }
+      return { valid: true, mediaType: "pdf" };
     }
 
     return { valid: true };

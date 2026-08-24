@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
+import { SafeImage } from "@/components/site/SafeImage";
 import {
   Heart,
   MessageCircle,
@@ -375,7 +376,7 @@ function UpdatesPage() {
                       
                       {/* Media Renderer */}
                       {currentMedia.type === "image" && (
-                        <img
+                        <SafeImage
                           src={currentMedia.url}
                           alt={post.caption}
                           onClick={() => {
@@ -394,7 +395,7 @@ function UpdatesPage() {
                       {currentMedia.type === "before-after" && (
                         <div className="relative h-full w-full group/slider">
                           {/* Simulated Before/After Comparison */}
-                          <img
+                          <SafeImage
                             src={currentMedia.beforeUrl}
                             alt="Before"
                             className="absolute inset-0 h-full w-full object-cover"
@@ -403,11 +404,10 @@ function UpdatesPage() {
                             className="absolute inset-y-0 right-0 overflow-hidden border-l-2 border-clay"
                             style={{ left: "50%" }}
                           >
-                            <img
+                            <SafeImage
                               src={currentMedia.afterUrl}
                               alt="After"
                               className="absolute right-0 top-0 h-full object-cover"
-                              style={{ width: "760px", maxBytes: "none" }} // Ensure alignment
                             />
                           </div>
                           <div className="absolute top-4 left-4 bg-ink/75 text-canvas text-[10px] uppercase tracking-wider px-2.5 py-1 rounded">
@@ -678,7 +678,7 @@ function UpdatesPage() {
               style={{ transform: `scale(${lightboxScale})` }}
             >
               {filteredPosts[lightboxIndex].media[activeMediaIndex].type === "image" && (
-                <img
+                <SafeImage
                   src={filteredPosts[lightboxIndex].media[activeMediaIndex].url}
                   alt=""
                   className="max-h-[70vh] max-w-[85vw] object-contain rounded"

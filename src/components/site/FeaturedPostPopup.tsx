@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { X, MapPin, Calendar, ArrowRight, Eye, Heart } from "lucide-react";
 
 import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
+import { SafeImage } from "@/components/site/SafeImage";
 
 export function FeaturedPostPopup() {
   const [latestPost, setLatestPost] = useState<Post | null>(null);
@@ -77,7 +78,7 @@ export function FeaturedPostPopup() {
             {hasMedia && latestPost.media[0].type === "video" ? (
               <SafeVideoPlayer src={latestPost.media[0].url} />
             ) : coverImage ? (
-              <img
+              <SafeImage
                 src={coverImage}
                 alt=""
                 className="h-full w-full object-cover"

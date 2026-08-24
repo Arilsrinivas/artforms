@@ -10,9 +10,11 @@ import {
   MediaItem,
   AnalyticsSummary
 } from "@/lib/updates-store";
+import { MediaStorage } from "@/lib/media-storage";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { SafeVideoPlayer } from "@/components/site/SafeVideoPlayer";
+import { SafeImage } from "@/components/site/SafeImage";
 import {
   Plus,
   Settings,
@@ -35,7 +37,8 @@ import {
   Sliders,
   Check,
   CheckCircle,
-  FileDown
+  FileDown,
+  AlertCircle
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/business-updates")({
@@ -62,6 +65,13 @@ function AdminBusinessUpdatesPage() {
   const [uploadedUrl, setUploadedUrl] = useState("");
   const [beforeUrl, setBeforeUrl] = useState("");
   const [afterUrl, setAfterUrl] = useState("");
+
+  // Upload Progress & Feedback State
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadFileName, setUploadFileName] = useState("");
+  const [uploadFileSize, setUploadFileSize] = useState("");
+  const [uploadError, setUploadError] = useState<string | null>(null);
   
   // Sub-lists and analytics
   const [posts, setPosts] = useState<Post[]>([]);
@@ -100,91 +110,146 @@ function AdminBusinessUpdatesPage() {
     navigate({ to: "/" });
   };
 
-  // Convert files helper for simulated uploads
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  // Convert files helper for simulated & persistent uploads
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "normal" | "before" | "after") => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
+    setUploadError(null);
 
+    // Multi-image upload for carousels
     if (field === "normal" && uploadType === "image") {
-      // Support multiple file uploads for images directly to the carousel draft list
+      setIsUploading(true);
+      setUploadProgress(10);
       const loadedMedia: Omit<MediaItem, "id">[] = [];
-      
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const validation = UpdatesStore.validateUpload(file);
+        setUploadFileName(file.name);
+        setUploadFileSize(formatBytes(file.size));
+        
+        const validation = UpdatesStore.validateUpload(file, "image");
         if (!validation.valid) {
+          setUploadError(validation.error || `File ${file.name} is invalid.`);
           toast.error(validation.error || `File ${file.name} is invalid.`);
           continue;
         }
 
-        const dataUrl = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (event) => resolve(event.target?.result as string);
-          reader.readAsDataURL(file);
-        });
+        setUploadProgress(Math.round(((i + 0.5) / files.length) * 100));
+
+        // Save image to persistent storage
+        const mediaId = "img_" + Date.now() + "_" + i + "_" + Math.random().toString(36).substr(2, 6);
+        await MediaStorage.saveMediaBlob(mediaId, file, file.type);
 
         loadedMedia.push({
           type: "image",
-          url: dataUrl,
-          title: "Media Asset"
+          url: "indexeddb://" + mediaId,
+          title: file.name
         });
+
+        setUploadProgress(Math.round(((i + 1) / files.length) * 100));
       }
 
+      setIsUploading(false);
       if (loadedMedia.length > 0) {
         setMediaList((prev) => [...prev, ...loadedMedia]);
-        toast.success(`Successfully uploaded ${loadedMedia.length} image(s) to carousel.`);
+        toast.success(`Successfully uploaded and attached ${loadedMedia.length} image(s).`);
       }
     } else {
-      // Single file upload for video, pdf, before, after
+      // Single file upload for video, pdf, before-after
       const file = files[0];
-      const validation = UpdatesStore.validateUpload(file);
+      setUploadFileName(file.name);
+      setUploadFileSize(formatBytes(file.size));
+
+      const validation = UpdatesStore.validateUpload(file, uploadType);
       if (!validation.valid) {
+        setUploadError(validation.error || "Invalid file upload");
         toast.error(validation.error || "Invalid file upload");
         return;
       }
 
-      if (field === "normal" && uploadType === "video") {
-        // Fast, zero-quota blob object URL generation for video files
-        const videoBlobUrl = URL.createObjectURL(file);
-        setUploadedUrl(videoBlobUrl);
-        setMediaList((prev) => [
-          ...prev,
-          {
-            type: "video",
-            url: videoBlobUrl,
-            title: file.name || "Video Project Clip"
-          }
-        ]);
-        toast.success(`Video "${file.name}" uploaded & added to post media!`);
-        return;
-      }
+      setIsUploading(true);
+      setUploadProgress(20);
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        if (field === "normal") {
-          setUploadedUrl(result);
+      // Simulate chunked upload progress
+      const progressTimer = setInterval(() => {
+        setUploadProgress((prev) => (prev < 90 ? prev + 25 : prev));
+      }, 100);
+
+      try {
+        if (field === "normal" && uploadType === "video") {
+          const mediaId = "vid_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+          await MediaStorage.saveMediaBlob(mediaId, file, file.type);
           
-          if (uploadType === "pdf") {
-            setMediaList((prev) => [...prev, {
-              type: "pdf",
-              url: result,
-              title: "Project Brochure (PDF)"
-            }]);
-            setUploadedUrl("");
-            toast.success(`PDF "${file.name}" added directly to post media.`);
-          } else {
-            toast.success(`${file.name} prepared successfully.`);
-          }
-        } else if (field === "before") {
-          setBeforeUrl(result);
-          toast.success("Before image prepared.");
-        } else if (field === "after") {
-          setAfterUrl(result);
-          toast.success("After image prepared.");
+          clearInterval(progressTimer);
+          setUploadProgress(100);
+
+          setMediaList((prev) => [
+            ...prev,
+            {
+              type: "video",
+              url: "indexeddb://" + mediaId,
+              title: file.name
+            }
+          ]);
+          setUploadedUrl("");
+          setIsUploading(false);
+          toast.success(`Video "${file.name}" (${formatBytes(file.size)}) uploaded successfully!`);
+          return;
         }
-      };
-      reader.readAsDataURL(file);
+
+        if (field === "normal" && uploadType === "pdf") {
+          const mediaId = "pdf_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+          await MediaStorage.saveMediaBlob(mediaId, file, file.type);
+          
+          clearInterval(progressTimer);
+          setUploadProgress(100);
+
+          setMediaList((prev) => [
+            ...prev,
+            {
+              type: "pdf",
+              url: "indexeddb://" + mediaId,
+              title: file.name || "Project Brochure (PDF)"
+            }
+          ]);
+          setUploadedUrl("");
+          setIsUploading(false);
+          toast.success(`PDF brochure "${file.name}" uploaded successfully!`);
+          return;
+        }
+
+        if (field === "before") {
+          const mediaId = "before_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+          await MediaStorage.saveMediaBlob(mediaId, file, file.type);
+          setBeforeUrl("indexeddb://" + mediaId);
+          clearInterval(progressTimer);
+          setUploadProgress(100);
+          setIsUploading(false);
+          toast.success(`Before image "${file.name}" uploaded.`);
+          return;
+        }
+
+        if (field === "after") {
+          const mediaId = "after_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+          await MediaStorage.saveMediaBlob(mediaId, file, file.type);
+          setAfterUrl("indexeddb://" + mediaId);
+          clearInterval(progressTimer);
+          setUploadProgress(100);
+          setIsUploading(false);
+          toast.success(`After image "${file.name}" uploaded.`);
+          return;
+        }
+      } catch (err: any) {
+        clearInterval(progressTimer);
+        setIsUploading(false);
+        setUploadError(err?.message || "Failed to store media file.");
+        toast.error("Upload failed: " + (err?.message || "Error saving file."));
+      }
     }
   };
 
@@ -200,18 +265,23 @@ function AdminBusinessUpdatesPage() {
       ]);
       setBeforeUrl("");
       setAfterUrl("");
+      toast.success("Before vs After comparison added to draft.");
     } else {
-      if (!uploadedUrl) {
-        toast.error("Please upload or enter a URL first.");
+      if (!uploadedUrl.trim()) {
+        toast.error("Please select a file to upload or enter a media web URL first.");
         return;
       }
       setMediaList((prev) => [
         ...prev,
-        { type: uploadType, url: uploadedUrl, title: uploadType === "pdf" ? "Project Brochure" : "Media Asset" }
+        { 
+          type: uploadType, 
+          url: uploadedUrl.trim(), 
+          title: uploadType === "pdf" ? "Project Brochure" : uploadType === "video" ? "Video Stream" : "Media Asset" 
+        }
       ]);
       setUploadedUrl("");
+      toast.success("Web asset added to post draft.");
     }
-    toast.success("Media asset added to current post draft.");
   };
 
   const handleCreatePost = (isDraft: boolean) => {
@@ -555,7 +625,13 @@ function AdminBusinessUpdatesPage() {
                   type="file"
                   onChange={(e) => handleFileChange(e, "normal")}
                   className="absolute inset-0 opacity-0 cursor-pointer"
-                  accept={uploadType === "video" ? "video/*" : uploadType === "pdf" ? "application/pdf" : "image/*"}
+                  accept={
+                    uploadType === "video"
+                      ? "video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+                      : uploadType === "pdf"
+                      ? "application/pdf,.pdf"
+                      : "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                  }
                   style={{ display: uploadType === "before-after" ? "none" : "block" }}
                   multiple={uploadType === "image"}
                 />
@@ -567,7 +643,7 @@ function AdminBusinessUpdatesPage() {
                         type="file"
                         onChange={(e) => handleFileChange(e, "before")}
                         className="absolute inset-0 opacity-0 cursor-pointer"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                       />
                       <span className="text-[10px] uppercase font-semibold text-muted-foreground">Before Photo</span>
                       {beforeUrl && <CheckCircle className="h-4 w-4 text-moss mx-auto mt-2" />}
@@ -577,7 +653,7 @@ function AdminBusinessUpdatesPage() {
                         type="file"
                         onChange={(e) => handleFileChange(e, "after")}
                         className="absolute inset-0 opacity-0 cursor-pointer"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
                       />
                       <span className="text-[10px] uppercase font-semibold text-muted-foreground">After Photo</span>
                       {afterUrl && <CheckCircle className="h-4 w-4 text-moss mx-auto mt-2" />}
@@ -586,18 +662,64 @@ function AdminBusinessUpdatesPage() {
                 ) : (
                   <>
                     <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                    <span className="text-xs text-ink/75 font-medium block">Drag & Drop file here</span>
-                    <span className="text-[10px] text-muted-foreground mt-1 block">Max size: 100 MB. Support PNG, JPG, MP4, PDF</span>
+                    <span className="text-xs text-ink/75 font-medium block">
+                      {uploadType === "video" ? "Choose or drop Video file" : uploadType === "pdf" ? "Choose or drop PDF Brochure" : "Choose or drop Images"}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground mt-1 block">
+                      {uploadType === "video" 
+                        ? "Max size: 100 MB. Formats: MP4, WebM, MOV" 
+                        : uploadType === "pdf" 
+                        ? "Max size: 50 MB. Format: PDF" 
+                        : "Max size: 25 MB per image. Formats: JPG, PNG, WebP"}
+                    </span>
                   </>
                 )}
               </div>
 
+              {/* Upload Progress Indicator */}
+              {isUploading && (
+                <div className="bg-canvas border border-ink/10 rounded-xl p-4 space-y-2.5 shadow-sm">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-medium text-ink truncate max-w-[200px]">
+                      Uploading {uploadFileName} {uploadFileSize ? `(${uploadFileSize})` : ""}...
+                    </span>
+                    <span className="font-bold text-clay">{uploadProgress}%</span>
+                  </div>
+                  <div className="h-2 w-full bg-sand/30 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-clay transition-all duration-300 rounded-full" 
+                      style={{ width: `${uploadProgress}%` }} 
+                    />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    {uploadProgress < 100 ? "Processing and storing media chunk..." : "Upload finalized successfully!"}
+                  </p>
+                </div>
+              )}
+
+              {/* Upload Error Banner */}
+              {uploadError && (
+                <div className="bg-destructive/10 border border-destructive/20 text-destructive text-xs p-3.5 rounded-xl flex items-start gap-2.5">
+                  <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                  <div className="flex-1 text-[11px] leading-relaxed">
+                    <strong className="block font-semibold mb-0.5">Upload Validation Failed</strong>
+                    {uploadError}
+                  </div>
+                </div>
+              )}
+
               {/* URL Fallback link input */}
               <div className="space-y-1">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground">Or provide asset web URL</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground">
+                  Or provide asset web URL {uploadType === "video" ? "(Direct MP4, YouTube, Vimeo)" : ""}
+                </span>
                 <input
                   type="text"
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder={
+                    uploadType === "video" 
+                      ? "https://assets.example.com/video.mp4 or YouTube link" 
+                      : "https://images.unsplash.com/..."
+                  }
                   value={uploadedUrl}
                   onChange={(e) => setUploadedUrl(e.target.value)}
                   className="w-full rounded border border-ink/15 bg-canvas px-3 py-2 text-xs text-ink focus:border-clay focus:outline-none"
@@ -608,7 +730,8 @@ function AdminBusinessUpdatesPage() {
               {/* Add Media button */}
               <button
                 onClick={addMediaToPost}
-                className="w-full rounded bg-ink py-2.5 text-xs uppercase tracking-wider text-canvas hover:bg-clay transition-colors"
+                disabled={isUploading}
+                className="w-full rounded bg-ink py-2.5 text-xs uppercase tracking-wider text-canvas hover:bg-clay transition-colors disabled:opacity-50"
               >
                 Add Asset to Post Draft
               </button>
@@ -619,14 +742,29 @@ function AdminBusinessUpdatesPage() {
                   <h4 className="font-semibold text-xs uppercase tracking-wider text-ink/70">Current Attachments ({mediaList.length})</h4>
                   <div className="grid grid-cols-4 gap-2">
                     {mediaList.map((media, idx) => (
-                      <div key={idx} className="relative aspect-square border rounded overflow-hidden bg-white group">
-                        {media.type === "image" && <img src={media.url} className="h-full w-full object-cover" />}
-                        {media.type === "video" && <div className="h-full w-full flex items-center justify-center bg-ink/10 text-xs">Video</div>}
-                        {media.type === "pdf" && <div className="h-full w-full flex items-center justify-center bg-sand/20 text-[10px]">PDF</div>}
-                        {media.type === "before-after" && <div className="h-full w-full flex items-center justify-center bg-clay/10 text-[10px]">B vs A</div>}
+                      <div key={idx} className="relative aspect-square border rounded overflow-hidden bg-black/5 group">
+                        {media.type === "image" && (
+                          <SafeImage src={media.url} className="h-full w-full object-cover" />
+                        )}
+                        {media.type === "video" && (
+                          <SafeVideoPlayer src={media.url} className="h-full w-full object-cover" />
+                        )}
+                        {media.type === "pdf" && (
+                          <div className="h-full w-full flex items-center justify-center bg-sand/20 text-[10px] font-semibold text-ink/80">PDF</div>
+                        )}
+                        {media.type === "before-after" && (
+                          <div className="h-full w-full flex items-center justify-center bg-clay/10 text-[10px] font-semibold text-clay">B vs A</div>
+                        )}
                         <button
-                          onClick={() => setMediaList((prev) => prev.filter((_, i) => i !== idx))}
+                          onClick={async () => {
+                            if (media.url && media.url.startsWith("indexeddb://")) {
+                              const mId = media.url.replace("indexeddb://", "");
+                              await MediaStorage.deleteMediaBlob(mId);
+                            }
+                            setMediaList((prev) => prev.filter((_, i) => i !== idx));
+                          }}
                           className="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove Attachment"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -652,10 +790,10 @@ function AdminBusinessUpdatesPage() {
                     {/* Media preview */}
                     <div className="aspect-[16/10] w-full bg-sand/30 overflow-hidden relative">
                       {post.media && post.media.length > 0 && post.media[0].type === "image" && (
-                        <img src={post.media[0].url} className="h-full w-full object-cover" />
+                        <SafeImage src={post.media[0].url} className="h-full w-full object-cover" />
                       )}
                       {post.media && post.media.length > 0 && post.media[0].type === "before-after" && (
-                        <img src={post.media[0].beforeUrl} className="h-full w-full object-cover" />
+                        <SafeImage src={post.media[0].beforeUrl} className="h-full w-full object-cover" />
                       )}
                       {post.media && post.media.length > 0 && post.media[0].type === "video" && (
                         <SafeVideoPlayer src={post.media[0].url} />
