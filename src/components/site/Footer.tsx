@@ -33,7 +33,7 @@ export function Footer() {
             <li>10th Cross, KR Puram</li>
             <li>Hassan, Karnataka - 573201</li>
             <li>Mon - Sat: 9:00 AM - 7:00 PM</li>
-            <li>+91 98450 12345</li>
+            <li><a href="https://wa.me/918147131315?text=Hello%20Artforms%20Civil%20and%20Interiors%2C%20I%20would%20like%20to%20get%20a%20free%20quote%20for%20my%20project." target="_blank" rel="noopener noreferrer" className="hover:text-clay transition-colors font-medium flex items-center gap-1">+91 81471 31315 (WhatsApp)</a></li>
           </ul>
         </div>
         <div>
