@@ -1,19 +1,19 @@
 import { useEffect, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import p1 from "@/assets/project-1.jpg";
-import p2 from "@/assets/project-2.jpg";
-import p3 from "@/assets/project-3.jpg";
-import p4 from "@/assets/project-4.jpg";
-import p5 from "@/assets/project-5.jpg";
-import i1 from "@/assets/inspiration-1.jpg";
+import style1 from "@/assets/style-modern-minimalist.jpg";
+import style2 from "@/assets/style-contemporary-luxury.jpg";
+import style3 from "@/assets/style-traditional-heritage.jpg";
+import style4 from "@/assets/style-modular-interiors.jpg";
+import style5 from "@/assets/style-commercial-executive.jpg";
+import style6 from "@/assets/style-elevation-facade.jpg";
 
 const styles = [
-  { name: "Modern Minimalist", img: p1, tone: "Sleek, space-saving, functional" },
-  { name: "Contemporary Luxury", img: p2, tone: "Rich textures, premium finishes" },
-  { name: "Traditional Heritage", img: p3, tone: "Teak accents, regional elegance" },
-  { name: "Modular Interiors", img: p4, tone: "Ergonomic, customizable, clean" },
-  { name: "Commercial Executive", img: p5, tone: "Professional, ambient, inviting" },
-  { name: "Elevation & Facade", img: i1, tone: "Bold geometry, modern materials" },
+  { name: "Modern Minimalist", img: style1, tone: "Sleek, space-saving, functional" },
+  { name: "Contemporary Luxury", img: style2, tone: "Rich textures, premium finishes" },
+  { name: "Traditional Heritage", img: style3, tone: "Teak accents, regional elegance" },
+  { name: "Modular Interiors", img: style4, tone: "Ergonomic, customizable, clean" },
+  { name: "Commercial Executive", img: style5, tone: "Professional, ambient, inviting" },
+  { name: "Elevation & Facade", img: style6, tone: "Bold geometry, modern materials" },
 ];
 
 export function Styles() {

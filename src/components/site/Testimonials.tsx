@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import i2 from "@/assets/inspiration-2.jpg";
-import i3 from "@/assets/inspiration-3.jpg";
-import p1 from "@/assets/project-1.jpg";
+import t1 from "@/assets/testimonial-1.jpg";
+import t2 from "@/assets/testimonial-2.jpg";
+import t3 from "@/assets/testimonial-3.jpg";
 
 const quotes = [
   {
     text: "Artforms delivered our home construction and interior work with exceptional quality. The 3D elevation matched the finished home 100%!",
     name: "Rajesh Gowda",
     project: "KR Puram Villa · Hassan",
-    img: p1,
+    img: t1,
   },
   {
     text: "Over 22 years of experience truly shows. From foundation civil work to modular interior installation, everything was handled seamlessly.",
     name: "Suresh & Vidya M.",
     project: "Vidyanagar Residence · Hassan",
-    img: i2,
+    img: t2,
   },
   {
     text: "They handled our commercial showroom's entire civil remodeling and interior design within our budget. Highly recommended contractors in Hassan!",
     name: "Dr. Ramesh Kumar",
     project: "BM Road Commercial · Hassan",
-    img: i3,
+    img: t3,
   },
 ];
 

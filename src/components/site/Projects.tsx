@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import p1 from "@/assets/project-1.jpg";
+import p1Over from "@/assets/project-1-over.jpg";
 import p2 from "@/assets/project-2.jpg";
+import p2Over from "@/assets/project-2-over.jpg";
 import p3 from "@/assets/project-3.jpg";
+import p3Over from "@/assets/project-3-over.jpg";
 import p4 from "@/assets/project-4.jpg";
+import p4Over from "@/assets/project-4-over.jpg";
 import p5 from "@/assets/project-5.jpg";
-import i1 from "@/assets/inspiration-1.jpg";
-import i2 from "@/assets/inspiration-2.jpg";
-import i3 from "@/assets/inspiration-3.jpg";
+import p5Over from "@/assets/project-5-over.jpg";
 
 const featured = [
-  { title: "Krishnaraja Villa", loc: "KR Puram, Hassan", year: "2024", cover: p1, over: i2 },
-  { title: "Ananda Residence", loc: "Vidyanagar, Hassan", year: "2024", cover: p2, over: i3 },
-  { title: "Sri Manjunatha Haven", loc: "Shanthi Nagar, Hassan", year: "2023", cover: p3, over: i1 },
-  { title: "Apex Commercial Plaza", loc: "BM Road, Hassan", year: "2023", cover: p4, over: i2 },
-  { title: "Sampige Luxury Villa", loc: "Kuvempunagar, Hassan", year: "2022", cover: p5, over: i3 },
+  { title: "Krishnaraja Villa", loc: "KR Puram, Hassan", year: "2024", cover: p1, over: p1Over },
+  { title: "Ananda Residence", loc: "Vidyanagar, Hassan", year: "2024", cover: p2, over: p2Over },
+  { title: "Sri Manjunatha Haven", loc: "Shanthi Nagar, Hassan", year: "2023", cover: p3, over: p3Over },
+  { title: "Apex Commercial Plaza", loc: "BM Road, Hassan", year: "2023", cover: p4, over: p4Over },
+  { title: "Sampige Luxury Villa", loc: "Kuvempunagar, Hassan", year: "2022", cover: p5, over: p5Over },
 ];
 
 export function Projects() {
