@@ -46,6 +46,9 @@ export function Footer() {
             <li className="story-link block">Residential Interiors</li>
             <li className="story-link block">Turnkey Execution</li>
             <li className="block pt-2">
+              <Link to="/projects" className="text-clay hover:underline block font-medium">All Projects & PDFs</Link>
+            </li>
+            <li className="block">
               <Link to="/updates" className="text-clay hover:underline block">Updates Feed</Link>
             </li>
             <li className="block">

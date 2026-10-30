@@ -22,7 +22,7 @@ export function Nav() {
 
   const navItems = [
     { name: "Services", href: "/#services", isExternal: false },
-    { name: "Projects", href: "/#projects", isExternal: false },
+    { name: "Projects", href: "/projects", isExternal: true },
     { name: "Process", href: "/#process", isExternal: false },
     { name: "Journal", href: "/#journal", isExternal: false },
     { name: "Updates", href: "/updates", isExternal: true },

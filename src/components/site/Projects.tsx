@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import useEmblaCarousel from "embla-carousel-react";
 import p1 from "@/assets/project-1.jpg";
 import p1Over from "@/assets/project-1-over.jpg";
@@ -98,9 +99,9 @@ export function Projects() {
                       {p.title}
                     </h3>
                   </div>
-                  <span className="text-[12px] uppercase tracking-[0.24em] text-ink story-link">
-                    View Project →
-                  </span>
+                  <Link to="/projects" className="text-[12px] uppercase tracking-[0.24em] text-ink story-link">
+                    View All Projects & PDFs →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -119,6 +120,22 @@ export function Projects() {
             }`}
           />
         ))}
+      </div>
+      <div className="mt-10 flex justify-center">
+        <Link
+          to="/projects"
+          className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-7 py-3 text-xs uppercase tracking-[0.2em] font-medium text-ink hover:bg-ink hover:text-canvas transition-all duration-300 shadow-sm hover:shadow"
+        >
+          Explore All 128+ Photos & Architectural PDFs →
+        </Link>
+      </div>
+      <div className="mt-10 flex justify-center">
+        <Link
+          to="/projects"
+          className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-7 py-3 text-xs uppercase tracking-[0.2em] font-medium text-ink hover:bg-ink hover:text-canvas transition-all duration-300 shadow-sm hover:shadow"
+        >
+          Explore All 128+ Photos & Architectural PDFs →
+        </Link>
       </div>
     </section>
   );
