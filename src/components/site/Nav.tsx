@@ -1,3 +1,4 @@
+import { openWhatsAppChat, getWhatsAppDirectUrl } from "@/lib/whatsapp";
 import afMarkDark from "@/assets/logo/af-mark-dark.png";
 import afMarkWhite from "@/assets/logo/af-mark-white.png";
 import { Link } from "@tanstack/react-router";
@@ -99,10 +100,9 @@ export function Nav() {
           })}
         </nav>
         <a
-          href="https://wa.me/918147131315?text=Hello%20Artforms%20Civil%20and%20Interiors%2C%20I%20would%20like%20to%20get%20a%20free%20quote%20for%20my%20project."
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`shrink-0 rounded-full border px-3 py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2.5 text-[10px] sm:text-[11px] lg:text-[12px] uppercase tracking-[0.14em] sm:tracking-[0.16em] lg:tracking-[0.2em] transition-all duration-300 inline-block ${
+          href={getWhatsAppDirectUrl()}
+          onClick={openWhatsAppChat}
+          className={`shrink-0 rounded-full border px-3 py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2.5 text-[10px] sm:text-[11px] lg:text-[12px] uppercase tracking-[0.14em] sm:tracking-[0.16em] lg:tracking-[0.2em] transition-all duration-300 inline-block cursor-pointer ${
             scrolled
               ? "border-ink/80 text-ink hover:bg-ink hover:text-canvas"
               : "border-canvas/80 text-canvas hover:bg-canvas hover:text-ink"

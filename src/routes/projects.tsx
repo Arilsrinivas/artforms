@@ -1,3 +1,4 @@
+import { openWhatsAppChat, getWhatsAppDirectUrl } from "@/lib/whatsapp";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { Nav } from "@/components/site/Nav";
@@ -533,10 +534,9 @@ function ProjectsPage() {
             </p>
           </div>
           <a
-            href="https://wa.me/918147131315?text=Hello%20Artforms%20Civil%20and%20Interiors%2C%20I%20would%20like%20to%20get%20a%20free%20quote%20for%20my%20project."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full bg-ink text-canvas hover:bg-clay px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors shrink-0 shadow-sm"
+            href={getWhatsAppDirectUrl()}
+            onClick={openWhatsAppChat}
+            className="rounded-full bg-ink text-canvas hover:bg-clay px-8 py-3.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors shrink-0 shadow-sm cursor-pointer"
           >
             Get Free Quote on WhatsApp
           </a>

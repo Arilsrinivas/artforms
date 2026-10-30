@@ -1,3 +1,4 @@
+import { openWhatsAppChat, getWhatsAppDirectUrl } from "@/lib/whatsapp";
 import { useState } from "react";
 import { toast } from "sonner";
 import hero1 from "@/assets/hero-1.jpg";
@@ -75,7 +76,13 @@ export function CTA() {
             </button>
           </form>
           <div className="mt-6 text-[11px] uppercase tracking-[0.24em] text-canvas/45">
-            Visit us at 10th Cross, KR Puram, Hassan · WhatsApp: <a href="https://wa.me/918147131315?text=Hello%20Artforms%20Civil%20and%20Interiors%2C%20I%20would%20like%20to%20get%20a%20free%20quote%20for%20my%20project." target="_blank" rel="noopener noreferrer" className="text-clay hover:underline font-semibold">+91 81471 31315</a>
+            Visit us at 10th Cross, KR Puram, Hassan · WhatsApp: <a
+              href={getWhatsAppDirectUrl()}
+              onClick={openWhatsAppChat}
+              className="text-clay hover:underline font-semibold cursor-pointer"
+            >
+              +91 81471 31315
+            </a>
           </div>
         </div>
       </div>
