@@ -1,3 +1,4 @@
+import logoBlack from "@/assets/logo/artforms-logo-black.png";
 import { Link } from "@tanstack/react-router";
 
 export function Footer() {
@@ -5,9 +6,21 @@ export function Footer() {
     <footer className="border-t border-border bg-canvas py-14">
       <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-6 md:grid-cols-4 md:px-10">
         <div className="md:col-span-2">
-          <div className="font-[family-name:var(--font-display)] text-2xl text-ink">
-            Artforms<span className="text-clay">.</span>Civil & Interior
-          </div>
+          <Link to="/" className="flex items-center gap-3 group mb-4">
+            <img
+              src={logoBlack}
+              alt="Artforms Civil and Interiors"
+              className="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="flex flex-col leading-none">
+              <span className="font-[family-name:var(--font-display)] text-2xl tracking-[0.04em] font-medium text-ink">
+                ARTFORMS
+              </span>
+              <span className="text-[10px] tracking-[0.26em] uppercase text-muted-foreground font-light mt-1">
+                Civil and Interiors
+              </span>
+            </div>
+          </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
             Hassan's trusted one-stop solution for civil construction, architectural planning, 3D elevation, and interior design with over 22 years of expertise.
           </p>
@@ -42,7 +55,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-14 flex max-w-[1400px] flex-col items-center justify-between gap-3 border-t border-border px-6 pt-6 text-[11px] uppercase tracking-[0.24em] text-muted-foreground md:flex-row md:px-10">
-        <span>© {new Date().getFullYear()} Artforms Civil & Interior, Hassan. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Artforms Civil and Interiors, Hassan. All rights reserved.</span>
         <span>Crafted with engineering precision.</span>
       </div>
     </footer>

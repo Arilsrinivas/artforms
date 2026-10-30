@@ -52,7 +52,7 @@ export function Hero() {
             <em className="italic text-clay/95">civil precision</em> & interior grace.
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-canvas/80 md:mt-6 md:max-w-xl md:text-base">
-            Artforms Civil & Interior is Hassan's premier one-stop solution for turnkey civil construction, architectural planning, photorealistic 3D elevation, and bespoke interior design.
+            Artforms Civil and Interiors is Hassan's premier one-stop solution for turnkey civil construction, architectural planning, photorealistic 3D elevation, and bespoke interior design.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3 md:mt-8 md:gap-4">
             <a

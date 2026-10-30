@@ -1,3 +1,5 @@
+import afMarkDark from "@/assets/logo/af-mark-dark.png";
+import afMarkWhite from "@/assets/logo/af-mark-white.png";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -37,14 +39,28 @@ export function Nav() {
       }`}
     >
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-10">
-        <Link to="/" className="flex items-center gap-2 shrink-0">
-          <span
-            className={`font-[family-name:var(--font-display)] text-xl sm:text-2xl tracking-[0.02em] transition-colors ${
-              scrolled ? "text-ink" : "text-canvas"
-            }`}
-          >
-            Artforms<span className="text-clay">.</span>Civil & Interior
-          </span>
+        <Link to="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group">
+          <img
+            src={scrolled ? afMarkDark : afMarkWhite}
+            alt="Artforms Civil and Interiors"
+            className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="flex flex-col leading-none">
+            <span
+              className={`font-[family-name:var(--font-display)] text-xl sm:text-2xl tracking-[0.04em] font-medium transition-colors ${
+                scrolled ? "text-ink" : "text-canvas"
+              }`}
+            >
+              ARTFORMS
+            </span>
+            <span
+              className={`text-[8px] sm:text-[9.5px] tracking-[0.24em] uppercase font-light transition-colors mt-0.5 ${
+                scrolled ? "text-ink/70" : "text-canvas/80"
+              }`}
+            >
+              Civil and Interiors
+            </span>
+          </div>
         </Link>
         <nav
           className={`hidden items-center gap-3 lg:gap-5 xl:gap-7 text-[11px] lg:text-[12px] xl:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.14em] xl:tracking-[0.18em] transition-colors lg:flex ${

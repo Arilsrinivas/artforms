@@ -17,7 +17,7 @@ export function CTA() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     toast.success("Consultation Request Received!", {
-      description: "Our experts at Artforms Civil & Interior will get in touch with you shortly.",
+      description: "Our experts at Artforms Civil and Interiors will get in touch with you shortly.",
     });
 
     setContact("");
@@ -51,7 +51,7 @@ export function CTA() {
             Let&apos;s build your dream home or interior project.
           </h2>
           <p className="mt-8 max-w-xl text-base leading-relaxed text-canvas/75">
-            Planning a new civil construction project, 3D elevation design, or interior renovation in Hassan? Connect with Artforms Civil & Interior for expert consultation and estimates.
+            Planning a new civil construction project, 3D elevation design, or interior renovation in Hassan? Connect with Artforms Civil and Interiors for expert consultation and estimates.
           </p>
           <form
             onSubmit={handleSubmit}

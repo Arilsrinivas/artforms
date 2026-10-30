@@ -1,3 +1,4 @@
+import afMarkWhite from "@/assets/logo/af-mark-white.png";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -42,6 +43,11 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/business-updates")({
+  head: () => ({
+    meta: [
+      { title: "Business Updates Dashboard | Artforms Civil and Interiors Admin" },
+    ],
+  }),
   component: AdminBusinessUpdatesPage,
 });
 
@@ -379,8 +385,8 @@ function AdminBusinessUpdatesPage() {
         <div className="mx-auto max-w-[1400px] px-6 md:px-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-canvas/50">
-              <span className="h-px w-8 bg-canvas/30" />
-              <span>Admin Dashboard</span>
+              <img src={afMarkWhite} alt="AF" className="h-4 w-auto object-contain opacity-70" />
+              <span>Artforms Civil and Interiors · Admin Dashboard</span>
             </div>
             <h1 className="font-[family-name:var(--font-display)] text-4xl font-light tracking-tight text-canvas md:text-5xl">
               Business <em className="italic text-clay">Updates Manager.</em>

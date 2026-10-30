@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import logoBlack from "@/assets/logo/artforms-logo-black.png";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Nav } from "@/components/site/Nav";
@@ -6,6 +7,11 @@ import { Footer } from "@/components/site/Footer";
 import { ShieldCheck, User, Lock, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/admin/login")({
+  head: () => ({
+    meta: [
+      { title: "Admin Portal | Artforms Civil and Interiors Hassan" },
+    ],
+  }),
   component: AdminLoginPage,
 });
 
@@ -33,7 +39,7 @@ function AdminLoginPage() {
     if (username === "admin" && password === "admin") {
       localStorage.setItem("artforms_admin_auth", "true");
       toast.success("Administrator Authenticated", {
-        description: "Welcome back, owner of Artforms Civil & Interior Hassan.",
+        description: "Welcome back, owner of Artforms Civil and Interiors Hassan.",
       });
       navigate({ to: "/admin/business-updates" });
     } else {
@@ -55,14 +61,18 @@ function AdminLoginPage() {
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-clay" />
 
           <div className="text-center mb-8">
-            <div className="h-14 w-14 rounded-full bg-clay/10 text-clay flex items-center justify-center mx-auto mb-4">
-              <ShieldCheck className="h-7 w-7" />
-            </div>
+            <Link to="/" className="inline-block transition-transform hover:scale-105 mb-3">
+              <img
+                src={logoBlack}
+                alt="Artforms Civil and Interiors"
+                className="h-14 sm:h-16 w-auto object-contain mx-auto"
+              />
+            </Link>
             <h1 className="font-[family-name:var(--font-display)] text-3xl font-light tracking-tight text-ink">
               Admin Portal
             </h1>
             <p className="text-xs text-muted-foreground mt-2 max-w-xs mx-auto">
-              Please enter your administrator credentials to access the Business Updates dashboard.
+              Artforms Civil and Interiors · Hassan Owner Portal
             </p>
           </div>
 

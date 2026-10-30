@@ -1,3 +1,5 @@
+import avatarBadge from "@/assets/logo/artforms-avatar-badge.png";
+import afMarkWhite from "@/assets/logo/af-mark-white.png";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { UpdatesStore, Post, ProjectType, Comment } from "@/lib/updates-store";
@@ -30,6 +32,13 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/updates")({
+  head: () => ({
+    meta: [
+      { title: "Business Updates & Live Projects | Artforms Civil and Interiors Hassan" },
+      { property: "og:title", content: "Business Updates & Live Projects | Artforms Civil and Interiors Hassan" },
+      { property: "og:description", content: "Latest project milestones, walkthroughs, and architectural updates from Artforms Civil and Interiors Hassan." },
+    ],
+  }),
   component: UpdatesPage,
 });
 
@@ -227,7 +236,7 @@ function UpdatesPage() {
         <div className="mx-auto max-w-[1400px] px-6 md:px-10 text-center">
           <div className="mb-4 flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.3em] text-canvas/50">
             <span className="h-px w-8 bg-canvas/30" />
-            <span>Artforms Civil & Interior</span>
+            <img src={afMarkWhite} alt="AF" className="h-4 w-auto object-contain opacity-80 inline-block mr-1" /><span>Artforms Civil and Interiors</span>
             <span className="h-px w-8 bg-canvas/30" />
           </div>
           <h1 className="font-[family-name:var(--font-display)] text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
@@ -341,12 +350,14 @@ function UpdatesPage() {
                   {/* Card Header */}
                   <div className="flex items-center justify-between px-6 py-4 border-b border-ink/5">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-ink flex items-center justify-center font-[family-name:var(--font-display)] text-canvas text-lg font-light italic">
-                        A
-                      </div>
+                      <img
+                        src={avatarBadge}
+                        alt="Artforms Civil and Interiors"
+                        className="h-10 w-10 rounded-full object-cover border border-ink/10 shadow-sm"
+                      />
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm text-ink">Artforms Civil & Interior</span>
+                          <span className="font-semibold text-sm text-ink tracking-tight">Artforms Civil and Interiors</span>
                           {post.pinned && <Pin className="h-3 w-3 text-clay rotate-45 fill-clay" />}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">

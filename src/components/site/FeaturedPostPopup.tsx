@@ -1,3 +1,4 @@
+import avatarBadge from "@/assets/logo/artforms-avatar-badge.png";
 import { useEffect, useState } from "react";
 import { UpdatesStore, Post } from "@/lib/updates-store";
 import { Link } from "@tanstack/react-router";
@@ -106,9 +107,12 @@ export function FeaturedPostPopup() {
               </div>
 
               <div>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-clay font-bold block mb-1">
-                  NEW PROJECT ANNOUNCEMENT
-                </span>
+                <div className="flex items-center gap-2 mb-2">
+                  <img src={avatarBadge} alt="Artforms" className="h-6 w-6 rounded-full object-cover" />
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-clay font-bold">
+                    Artforms Civil and Interiors
+                  </span>
+                </div>
                 <h3 className="font-[family-name:var(--font-display)] text-3xl font-light text-ink leading-tight">
                   Featured <em className="italic">Update.</em>
                 </h3>
